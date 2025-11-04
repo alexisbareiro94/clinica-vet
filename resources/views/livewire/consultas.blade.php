@@ -85,5 +85,18 @@
                               hover:scale-101 hover:shadow-lg relative ${coloresf[estado] || 'bg-gray-300 border-gray-400'}`;
             }
         }
+
+        function mostarMensaje() {
+            let funcion = document.getElementById('funcion');
+            let mensaje = document.getElementById('mensaje');
+            if (funcion && mensaje) {
+                funcion.addEventListener('click', function() {
+                    mensaje.classList.toggle('hidden');
+                });
+            }
+        }
+
+        // Ejecutar al cargar la página
+        document.addEventListener('DOMContentLoaded', mostarMensaje);
     </script>
 </div>

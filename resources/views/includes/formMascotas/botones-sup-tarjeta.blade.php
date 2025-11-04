@@ -34,7 +34,7 @@
     <button type="button" id="filtro"
         class="cursor-pointer absolute top-3 text-sm w-8 h-8 m-2 inline-flex justify-center items-center rounded-lg transition-all duration-200 hover:-translate-y-0.5 {{ $vacunaq ? 'left-128' : 'left-120' }}
         {{ $mascotaT->ultimaVacuna ? ($mascotaT->ultimaVacuna->proxima_vacunacion <= now()->format('Y-m-d') ? 
-            'bg-red-200 text-red-500 hover:text-red-700': '') 
+            'bg-red-200 text-red-500 hover:text-red-700 border border-red-300': '') 
             : 'bg-gray-200' }}"
         wire:click="vacunasAggTrue">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

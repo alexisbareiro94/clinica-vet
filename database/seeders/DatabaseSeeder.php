@@ -19,7 +19,9 @@ class DatabaseSeeder extends Seeder {
             RolSeeder::class,
             UserSeeder::class,
             PermisoSeeder::class,
-            //CategoriasSeeder::class,
+            ModulosSeeder::class,
+            PlaneSeeder::class,
+            PlanModuloSeeder::class,
         ]);
     }
 }

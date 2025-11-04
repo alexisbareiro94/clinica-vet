@@ -68,7 +68,8 @@ class Inventario extends Component
     /**
      * 
      */
-    public function mount(){
+    public function mount()
+    {
         Helper::check();
         if (empty(session('modulos')['inventario'])) {
             return redirect('/');
@@ -78,34 +79,39 @@ class Inventario extends Component
         $this->proveedores = Proveedor::where('owner_id', $this->ownerId())->get();
     }
 
-    public function getProductos() {
+    public function getProductos()
+    {
         return Cache::remember('productos', 60, function () {
             return Producto::where('owner_id', $this->ownerId())->get();
         });
     }
 
-    public function forgetProductos(){
+    public function forgetProductos()
+    {
         Cache::forget('productos');
     }
 
-    public function filtrar(){
+    public function filtrar()
+    {
         $this->productos = Producto::where('owner_id', $this->ownerId())
             ->where(function ($query) {
                 $query->where('nombre', 'like', '%' . $this->search . '%')
                     ->orWhere('codigo', 'like', '%' . $this->search . '%');
             })
             ->get();
-            $this->forgetProductos();
+        $this->forgetProductos();
     }
 
-    public function flag(){
+    public function flag()
+    {
         $this->search = '';
         $this->mount();
     }
     /**
      * 
      */
-    public function ownerId(): mixed {
+    public function ownerId(): mixed
+    {
         $requestUserId = Auth::user()->id;
         $user = User::find($requestUserId);
         if ($user->admin) {
@@ -265,7 +271,8 @@ class Inventario extends Component
     /**
      * 
      */
-    public function agregarCategoria() {
+    public function agregarCategoria()
+    {
         $this->validate([
             'categoria' => 'required'
         ]);
@@ -279,12 +286,13 @@ class Inventario extends Component
         return redirect()->route('inventario')->with('agregado', 'Categoria agregada correctamente');
     }
 
-    public function deleteProducto() :void {
+    public function deleteProducto(): void
+    {
         try {
             $producto = Producto::where('id', $this->productoId)
                 ->where('owner_id', $this->ownerId())
                 ->first();
-            if($producto->foto){
+            if ($producto->foto) {
                 unlink(public_path('uploads/productos/' . $producto->foto));
             }
             $producto->delete();
@@ -293,7 +301,7 @@ class Inventario extends Component
             $this->dispatch('producto-noborrado');
             return;
         }
-        
+
         $this->alertaFalse();
         $this->dispatch('producto-borrado');
         $this->productos = Producto::where('owner_id', $this->ownerId())->get();
@@ -324,7 +332,17 @@ class Inventario extends Component
     /**
      * Store a newly created resource in storage.
      */
-    public function store():void {
+    public function store(): void {
+        if (Auth::user()->plan_id == 1) {
+            if (filled($this->unidades) ||
+                filled($this->precio_interno) ||
+                filled($this->capacidad) ||
+                filled($this->cantidadCapacidad)
+                ) {
+                $this->dispatch('error', 'Debes actualizar tu plan para usar configuración interna');
+            }
+        }
+
         $this->validate([
             'nombre' => 'required',
             'proveedor_id' => 'nullable|exists:proveedores,id',
@@ -348,23 +366,23 @@ class Inventario extends Component
             'foto.max' => 'La imagen no debe pesar más de 2MB.',
         ]);
 
-        if($this->precio_interno != null){
+        if ($this->precio_interno != null) {
             $this->validate([
                 'unidades' => 'required',
                 'cantidad' => 'required',
                 'capacidad' => 'required',
-                'cantidadCapacidad' => 'required',                
+                'cantidadCapacidad' => 'required',
             ], [
                 'unidad_medida.required' => 'El campo unidad de medida es obligatorio.',
                 'cantidad.required' => 'El campo cantidad es obligatorio.',
-                'capacidad.required' => 'El campo capacidad es obligatorio.',                
-            ]);   
+                'capacidad.required' => 'El campo capacidad es obligatorio.',
+            ]);
         }
         if ($this->foto) {
             $imageName = time() . '.' . $this->foto->getClientOriginalExtension();
             $this->foto->storeAs('uploads/productos', $imageName, 'public_path');
         }
-        
+
         $producto = Producto::create([
             'nombre' => $this->nombre,
             'codigo' => $this->flagCodigo ? $this->codigo(6) : ($this->codigo ?? null),
@@ -426,8 +444,7 @@ class Inventario extends Component
     }
 
     #[On('producto-borrado')]
-    public function r(){
-    }
+    public function r() {}
     private function codigo($length): string
     {
         $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';

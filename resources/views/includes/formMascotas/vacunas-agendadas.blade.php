@@ -43,23 +43,26 @@
                                 </td>
                                 <td>
                                     <div class="flex flex-col gap-1 py-4 pl-12 justify-end items-center">
-                                        @if ($vacuna->recordatorio)
-                                        <div class="group relative">
-                                            <button class="w-[150px] cursor-pointer text-green-700 bg-green-200 border font-semibold text-sm border-gray-200 px-2 py-1 rounded-md hover:bg-green-300">
-                                                Enviado
-                                            </button>
-                                            
-                                            <button wire:click='enviarRecordatorio({{ $vacuna->id }})'
-                                                class="opacity-0 -z-10 group-hover:opacity-100 group-hover:z-10 transition-all duration-200  
+                                        @if (!Auth::user()->plan_id == 1)
+                                            @if ($vacuna->recordatorio)
+                                                <div class="group relative">
+                                                    <button
+                                                        class="w-[150px] cursor-pointer text-green-700 bg-green-200 border font-semibold text-sm border-gray-200 px-2 py-1 rounded-md hover:bg-green-300">
+                                                        Enviado
+                                                    </button>
+
+                                                    <button wire:click='enviarRecordatorio({{ $vacuna->id }})'
+                                                        class="opacity-0 -z-10 group-hover:opacity-100 group-hover:z-10 transition-all duration-200  
                                                         absolute -top-0 right-32  w-[110px] cursor-pointer  text-gray-800 bg-gray-200 border  font-semibold text-xs border-gray-700 px-2 py-1 rounded-md hover:bg-gray-300">
-                                                Volver a Enviar
-                                            </button>
-                                        </div>
-                                        @else
-                                            <button wire:click='enviarRecordatorio({{ $vacuna->id }})'
-                                                class="w-[150px] cursor-pointer text-gray-800 bg-gray-200 border font-semibold text-sm border-gray-200 px-2 py-1 rounded-md hover:bg-gray-300">
-                                                Enviar Recordatorio
-                                            </button>
+                                                        Volver a Enviar
+                                                    </button>
+                                                </div>
+                                            @else
+                                                <button wire:click='enviarRecordatorio({{ $vacuna->id }})'
+                                                    class="w-[150px] cursor-pointer text-gray-800 bg-gray-200 border font-semibold text-sm border-gray-200 px-2 py-1 rounded-md hover:bg-gray-300">
+                                                    Enviar Recordatorio
+                                                </button>
+                                            @endif
                                         @endif
 
                                         <button

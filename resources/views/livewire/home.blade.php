@@ -19,8 +19,8 @@
     </nav>
     
     <!-- Contenedor principal -->
-    <div class="container mx-auto pt-12 px-18">        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="container  mx-auto pt-12">        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Gestión de pacientes -->
             @if (session('modulos'))                            
                 @if (!empty(session('modulos')['gestionPaciente']))
@@ -50,7 +50,11 @@
                 <!-- Reportes -->
                 @if (!empty(session('modulos')['reportes']))
                     @include('includes.home.reportes')                
-                @endif            
+                @endif     
+                
+                @if (Auth::user()->plan_id < 5)
+                    @include('includes.home.plan')
+                @endif
 
                 <!-- Alertas y notificaciones -->
                 {{-- @if (!empty(session('modulos')['alertas']))

@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\Helper;
+use App\Livewire\Planes;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\GestionUsuarioController;
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Cache;
 Route::get('/registro', [AuthController::class, 'registerForm'])->name('auth.registerform');
 Route::post('/registro/save', [AuthController::class, 'register'])->name('auth.register');
 Route::post('/iniciar-sesion', [AuthController::class, 'login'])->name('auth.login');
-
+Route::get('/planes', Planes::class)->name('planes');
 
 Route::middleware(Login::class)->group(function () {
     Route::get('/', Home::class)->name('index');
@@ -46,9 +47,7 @@ Route::middleware(Login::class)->group(function () {
     Route::get('/crear-caja/{consultaId}', [CajaController::class, 'store'])->name('caja.store');
     Route::get('/caja', Caja::class)->name('caja');
     Route::get('/reportes', Reportes::class)->name('reportes');
-
     Route::post('/actualizar-user', [GestionUsuarioController::class, 'update'])->name('user.update');
-
     Route::get('/reporte-pdf/ventas', [ReportsController::class, 'exportarPdf'])->name('reporte.pdf');
     Route::post('/reporte-pdf/entradas', [ReportsController::class, 'reporteEntradas'])->name('reporte.entradas');
 

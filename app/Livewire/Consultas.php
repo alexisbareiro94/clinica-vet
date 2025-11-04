@@ -227,6 +227,9 @@ class Consultas extends Component
      */
     public function filtrarProductos(): void
     {
+        if (Auth::user()->plan_id == 1) {
+            return;
+        }
         $this->openProductoConsumido();
         if (empty($this->q)) {
             $this->productos = Producto::take(0)->get();
@@ -298,6 +301,9 @@ class Consultas extends Component
      */
     public function quitarProducto($index, $consultaId)
     {
+        if (Auth::user()->plan_id == 1) {
+            return;
+        }
         $consumo = session('consumo', []);
 
         if (!isset($consumo[$consultaId][$index])) {
@@ -440,7 +446,8 @@ class Consultas extends Component
             $this->openModalConfig($this->consultaToEdit->id);
         }
     }
-    private function codigo($length) :string {
+    private function codigo($length): string
+    {
         $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $randomString = '';
 
@@ -453,8 +460,33 @@ class Consultas extends Component
     /**
      * funcion que crea las consultas
      */
-    public function crearConsulta()
-    {
+    public function crearConsulta() {
+        $r = '';
+        if(Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2){
+            $r = Consulta::where('owner_id', $this->ownerId())->get();
+            if($r->count() >= 50){
+                return redirect()->route('consultas')->with('error', 'No puedes crear más de 50 consultas en el plan gratuito/Básico');
+            }            
+        }
+
+        if(Auth::user()->plan_id == 3){
+            if($r->count() >= 100){
+                return redirect()->route('consultas')->with('error', 'No puedes crear más de 100 consultas en el plan Estándar');
+            }
+        }
+
+        if(Auth::user()->plan_id == 4){
+            if($r->count() >= 200){
+                return redirect()->route('consultas')->with('error', 'No puedes crear más de 200 consultas en el plan Profesional');
+            }
+        }
+
+        if(Auth::user()->plan_id == 5){
+            if($r->count() >= 350){
+                return redirect()->route('consultas')->with('error', 'No puedes crear más de 350 consultas en el plan Avanzado');
+
+            }
+        }
         $this->validate([
             'mascota_id' => 'required',
             'veterinario_id' => 'required',
@@ -598,6 +630,10 @@ class Consultas extends Component
     {
         $consumo = session('consumo', []);
         if (!empty($consumo)) {
+            if (Auth::user()->plan_id == 1) {
+                return;
+            }
+
             foreach ($consumo as $item) {
                 foreach ($item as $value) {
                     $producto = Producto::where('id', $value['productoId'])
@@ -652,8 +688,8 @@ class Consultas extends Component
                             'mascota_id' => $this->consultaToEdit->mascota_id,
                             'producto_id' => $value['productoId'],
                             'aplicada' => true,
-                            'proxima_vacunacion' => null,               
-                            'proxima_vacuna' => null,             
+                            'proxima_vacunacion' => null,
+                            'proxima_vacuna' => null,
                             'fecha_vacunacion' => now()->format('Y-m-d'),
                             'owner_id' => $this->ownerId(),
                             'aplicada' => true,
@@ -708,39 +744,40 @@ class Consultas extends Component
             }
         }
 
-        $productos = [];
-        foreach ($consumo[$this->consultaToEdit->id] as $item) { //<- no tocar este foreach
-            $productos[] = $item['productoId'];
-        }
-
-        if (session('caja')) {
-            $consultaProductos = ConsultaProducto::where('consulta_id', $this->consultaToEdit->id)
-                ->where('owner_id', $this->ownerId())
-                ->get();
-
-            $totalProductos = 0;
-            foreach ($consultaProductos as $cProducto) {
-                $producto = Producto::where('id', $cProducto->producto_id)
-                    ->where('owner_id', $this->ownerId())
-                    ->first();
-                $totalProductos += $cProducto->cantidad * (int)$producto->precio_interno;
+        if ($consumo) {
+            $productos = [];
+            foreach ($consumo[$this->consultaToEdit->id] as $item) { //<- no tocar este foreach
+                $productos[] = $item['productoId'];
             }
-            $total = $totalProductos + $cProducto->consulta->tipoConsulta->precio;
-            $cajadb = Caja::where('consulta_id', $this->consultaToEdit->id)
-                ->where('owner_id', $this->ownerId())
-                ->where('pago_estado', 'Pendiente')
-                ->first();
-            $cajadb->update([
-                'monto_total' => 0,
-            ]);
-            $cajadb->update([
-                'productos' => $productos,
-                'monto_total' => $total,
-            ]);
-            Session::forget('caja');
-            Helper::crearCajas();
-        }
 
+            if (session('caja')) {
+                $consultaProductos = ConsultaProducto::where('consulta_id', $this->consultaToEdit->id)
+                    ->where('owner_id', $this->ownerId())
+                    ->get();
+
+                $totalProductos = 0;
+                foreach ($consultaProductos as $cProducto) {
+                    $producto = Producto::where('id', $cProducto->producto_id)
+                        ->where('owner_id', $this->ownerId())
+                        ->first();
+                    $totalProductos += $cProducto->cantidad * (int)$producto->precio_interno;
+                }
+                $total = $totalProductos + $cProducto->consulta->tipoConsulta->precio;
+                $cajadb = Caja::where('consulta_id', $this->consultaToEdit->id)
+                    ->where('owner_id', $this->ownerId())
+                    ->where('pago_estado', 'Pendiente')
+                    ->first();
+                $cajadb->update([
+                    'monto_total' => 0,
+                ]);
+                $cajadb->update([
+                    'productos' => $productos,
+                    'monto_total' => $total,
+                ]);
+                Session::forget('caja');
+                Helper::crearCajas();
+            }
+        }
 
         $consulta = Consulta::where('id', $this->consultaToEdit->id)->where('owner_id', $this->ownerId())->first();
         $getEstado = gettype(Helper::updateEstado($this->consultaToEdit->id, $this->estado));
@@ -826,6 +863,9 @@ class Consultas extends Component
      */
     public function disminuirCantidad(int $consultaId, int $productoId): void
     {
+        if (Auth::user()->plan_id == 1) {
+            return;
+        }
         $cajadb = Caja::where('consulta_id', $consultaId)
             ->where('owner_id', $this->ownerId())
             ->where('pago_estado', 'Pendiente')
@@ -913,7 +953,10 @@ class Consultas extends Component
         $this->tipoConsultas = TipoConsulta::where('owner_id', $this->ownerId())->get();
     }
 
-    public function enviarRecordatorio(int $consultaId){
+    public function enviarRecordatorio(int $consultaId) {
+        if(Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2 || Auth::user()->plan_id == 3) {
+            return;
+        }
         $consulta = Consulta::where('id', $consultaId)
             ->where('owner_id', $this->ownerId())
             ->first();

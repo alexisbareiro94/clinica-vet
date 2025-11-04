@@ -9,17 +9,29 @@ use App\Models\Producto;
 use App\Helpers\Helper;
 use Illuminate\Support\Facades\Auth;
 
-class InventarioController extends Controller {
-    public function update(Request $request, $productoId) : RedirectResponse {        
-        try{
+class InventarioController extends Controller
+{
+    public function update(Request $request, $productoId): RedirectResponse {
+        try {            
+            if (Auth::user()->plan_id == 1) {
+                if (
+                    filled($request->unidad_medida) ||
+                    filled($request->cantidad) ||
+                    filled($request->precio_interno) ||
+                    filled($request->cantidad_capacidad)
+                ) {
+                    return redirect()->back()->with('error', 'Debes actualizar tu plan para usar configuración interna');
+                }
+            }
+
             $request->validate([
                 'nombre' => 'required',
-                'descripcion' => 'nullable',            
-                'categoria' => 'required|exists:categorias,id',            
-                'precio' => 'required',            
+                'descripcion' => 'nullable',
+                'categoria' => 'required|exists:categorias,id',
+                'precio' => 'required',
                 'precio_compra' => 'nullable',
                 'stock_actual' => 'required',
-                'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',            
+                'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             ]);
 
             $producto = Producto::where('id', $productoId)
@@ -34,11 +46,11 @@ class InventarioController extends Controller {
             }
             if (isset($request->deleteFoto) && $producto->foto) {
                 $rutaFoto = public_path('uploads/productos/' . $producto->foto);
-                
+
                 if (file_exists($rutaFoto)) {
                     unlink($rutaFoto);
                 }
-            }            
+            }
 
             $producto->update([
                 'nombre' => $request->nombre ?? $producto->nombre,
@@ -47,7 +59,7 @@ class InventarioController extends Controller {
                 'precio' => $request->precio ?? $producto->precio,
                 'precio_compra' => $request->precio_compra ?? $producto->precio_compra,
                 'stock_actual' => $request->stock_actual ?? $producto->stock_actual,
-                'foto' => $imageName ?? (isset($request->deleteFoto) ? null : $producto->foto), 
+                'foto' => $imageName ?? (isset($request->deleteFoto) ? null : $producto->foto),
                 'unidad_medida' => $request->unidades ?? $producto->unidad_medida,
                 'cantidad' => $request->cantidad ?? $producto->cantidad,
                 'precio_interno' => $request->precio_interno ?? $producto->precio_interno,
@@ -57,15 +69,15 @@ class InventarioController extends Controller {
             $ownerId = Helper::ownerId();
             Helper::forgetProductos();
             Helper::getProductos($ownerId);
-
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return redirect()->route('inventario')->with('error', $e->getMessage());
         }
 
         return back()->with('editado', 'Producto Actualizado');
-    }   
+    }
 
-    private function codigo($length) : string {
+    private function codigo($length): string
+    {
         $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $randomString = '';
 

@@ -151,69 +151,79 @@
                 @endif
             </div>
 
-            <!-- opciones de uso interno -->
-            <div class=" my-4 pt-5">
-                <p class="text-2xl font-semibold text-center text-gray-800 mb-2 block">Opciones para uso interno</p>
-                <div class="py-6 flex gap-1">
-                    <p>Marcar solo para uso interno:</p>
-                    <input wire:model='usoInterno'
-                        class="cursor-pointer p-3"
-                        type="checkbox" id="solo-uso-interno">
+            @if (Auth::user()->plan_id == 1)
+                <div class="mt-4 mb-4 p-4 bg-gray-100 rounded border border-dashed border-gray-400 text-gray-500">
+                    <h3 class="font-bold">Uso interno</h3>
+                    <p>No disponible para este plan.</p>
+                    <button class="cursor-pointer font-semibold mt-2 px-3 py-1 bg-gray-300 rounded text-sm transition-all duration-500 hover:bg-gradient-to-r hover:from-green-200 hover:to-green-300 hover:text-green-600 hover:font-semibold">
+                        Actualizar a plan avanzado
+                    </button>
                 </div>
-                <p class="block text-gray-800 font-medium mb-2">Precios de uso interno:</p>
-                <div class="flex items-center mb-4 gap-2">
-                    <select wire:model="unidades" id="unidades"
-                        class="w-24 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100">
-                        <option value="" selected >-- Elegir unidad --</option>
-                        <option value="cu">Unidad</option>
-                        <option value="ml">Mililitro (ml)</option>
-                        <option value="mg">Miligramo (mg)</option>
-                        <option value="gr">Gramo (gr)</option>
-                    </select>
-
-                    <input value="1" type="number" wire:model="cantidad"
-                        class="py-2 px-2 w-16 border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100">
-
-                    <div class="relative">
-                        <input
-                            class="z-30 py-2 px-3 w-full border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100"
-                            type="number" wire:model="precio_interno">
-                        <i class="absolute top-2.5 right-4 z-40 border-l pl-2 bg-white">
-                            Gs.
-                        </i>
+            @else
+                <!-- opciones de uso interno -->
+                <div class=" my-4 pt-5">
+                    <p class="text-2xl font-semibold text-center text-gray-800 mb-2 block">Opciones para uso interno
+                    </p>
+                    <div class="py-6 flex gap-1">
+                        <p>Marcar solo para uso interno:</p>
+                        <input wire:model='usoInterno' class="cursor-pointer p-3" type="checkbox"
+                            id="solo-uso-interno">
                     </div>
+                    <p class="block text-gray-800 font-medium mb-2">Precios de uso interno:</p>
+                    <div class="flex items-center mb-4 gap-2">
+                        <select wire:model="unidades" id="unidades"
+                            class="w-24 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100">
+                            <option value="" selected>-- Elegir unidad --</option>
+                            <option value="cu">Unidad</option>
+                            <option value="ml">Mililitro (ml)</option>
+                            <option value="mg">Miligramo (mg)</option>
+                            <option value="gr">Gramo (gr)</option>
+                        </select>
+
+                        <input value="1" type="number" wire:model="cantidad"
+                            class="py-2 px-2 w-16 border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100">
+
+                        <div class="relative">
+                            <input
+                                class="z-30 py-2 px-3 w-full border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100"
+                                type="number" wire:model="precio_interno">
+                            <i class="absolute top-2.5 right-4 z-40 border-l pl-2 bg-white">
+                                Gs.
+                            </i>
+                        </div>
+                    </div>
+                    @error('unidades')
+                        <div class="text-sm text-red-600 bg-red-100 border border-red-300 rounded-md px-3 py-2 mt-1">
+                            Campos obligatorios
+                        </div>
+                    @enderror
+                    <!-- opciones de cantidad -->
+                    <p class="block text-gray-800 font-medium mb-2">Opciones de cantidad:</p>
+                    <div class="flex items-center mb-4 gap-2">
+                        <select wire:model="capacidad" id="capacidad"
+                            class="w-1/4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100">
+                            <option value="" selected>-- Elegir unidad --</option>
+                            <option value="u">Unidad</option>
+                            <option value="ml">Mililitro (ml)</option>
+                            <option value="mg">Miligramo (mg)</option>
+                            <option value="gr">Gramo (gr)</option>
+                        </select>
+
+                        <input value="1" type="number" wire:model="cantidadCapacidad"
+                            class="py-2 px-2 w-1/4 border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100">
+                    </div>
+                    @error('capacidad')
+                        <div class="text-sm text-red-600 bg-red-100 border border-red-300 rounded-md px-3 py-2 mt-1">
+                            Campos obligatorios
+                        </div>
+                    @enderror
+                    @error('cantidadCapacidad')
+                        <div class="text-sm text-red-600 bg-red-100 border border-red-300 rounded-md px-3 py-2 mt-1">
+                            Campos obligatorios
+                        </div>
+                    @enderror
                 </div>
-                @error('unidades')
-                    <div class="text-sm text-red-600 bg-red-100 border border-red-300 rounded-md px-3 py-2 mt-1">
-                        Campos obligatorios
-                    </div>
-                @enderror
-                <!-- opciones de cantidad -->
-                <p class="block text-gray-800 font-medium mb-2">Opciones de cantidad:</p>
-                <div class="flex items-center mb-4 gap-2">
-                    <select wire:model="capacidad" id="capacidad"
-                        class="w-1/4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100">
-                        <option value="" selected>-- Elegir unidad --</option>
-                        <option value="u">Unidad</option>
-                        <option value="ml">Mililitro (ml)</option>
-                        <option value="mg">Miligramo (mg)</option>
-                        <option value="gr">Gramo (gr)</option>
-                    </select>
-
-                    <input value="1" type="number" wire:model="cantidadCapacidad"
-                        class="py-2 px-2 w-1/4 border border-gray-300 rounded-md focus:outline-none focus:border-gray-800 focus:bg-gray-100">
-                </div>
-                @error('capacidad')
-                    <div class="text-sm text-red-600 bg-red-100 border border-red-300 rounded-md px-3 py-2 mt-1">
-                        Campos obligatorios
-                    </div>
-                @enderror
-                @error('cantidadCapacidad')
-                    <div class="text-sm text-red-600 bg-red-100 border border-red-300 rounded-md px-3 py-2 mt-1">
-                        Campos obligatorios
-                    </div>
-                @enderror
-            </div>
+            @endif
             <!-- Botón de enviar -->
             <button type="submit"
                 class="w-full bg-gray-800 text-white font-medium py-2 rounded-md hover:bg-black transition duration-300">

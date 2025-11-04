@@ -86,13 +86,14 @@
                                     </a>
                                     <button wire:click="tarjetaTrue({{ $mascota->id }})"
                                         class="cursor-pointer rounded-md px-3 py-1 text-sm
-                                @if (
-                                    $mascota->ultimaVacuna &&
-                                        $mascota->ultimaVacuna->proxima_vacunacion &&
-                                        $mascota->ultimaVacuna->proxima_vacunacion <= now()->format('Y-m-d')) text-red-500 bg-red-200 hover:bg-red-200 focus:ring-2 hover:text-red-700 focus:ring-red-500
-                                @else
-                                    text-gray-800 bg-gray-200 hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 @endif">
-                                        Tarjeta de Vacunación
+                                        @if ($mascota->ultimaVacuna && $mascota->ultimaVacuna->proxima_vacunacion &&
+                                            $mascota->ultimaVacuna->proxima_vacunacion <=  now()->format('Y-m-d')) 
+                                            {{-- si la condicion se cumple:   --}}
+                                            border border-red-500 text-red-500 bg-red-200 hover:bg-red-200 focus:ring-2 hover:text-red-700 focus:ring-red-500
+                                        @else
+                                            border border-gray-800 hover:bg-gray-200
+                                        @endif">
+                                        Tarjeta
                                     </button>
 
 

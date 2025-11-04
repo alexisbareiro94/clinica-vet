@@ -15,35 +15,30 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg mx-auto max-w-5xl overflow-hidden ">
             <div class="p-6">
                 <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Detalles del Producto</h2>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
                     <!-- Imagen del producto -->
                     <div class="md:col-span-2">
                         <div class="bg-gray-100 rounded-lg overflow-hidden aspect-w-1 aspect-h-1">
-                            <img 
-                                src="{{ asset("uploads/productos/$detalleProducto->foto") }}" 
+                            <img src="{{ asset("uploads/productos/$detalleProducto->foto") }}"
                                 alt="Imagen de {{ $detalleProducto->nombre }}"
-                                class="object-cover w-full h-full hover:scale-105 transition-transform"
-                            >
+                                class="object-cover w-full h-full hover:scale-105 transition-transform">
                         </div>
                     </div>
-        
+
                     <!-- Detalles del producto -->
                     <div class="md:col-span-3 space-y-4">
                         @include('includes.inventario.detalles.detalle-por-producto')
                     </div>
                 </div>
 
-                <button wire:click='historialTrue({{ $detalleProducto->id }})'
+                @if (Auth::user()->plan_id != 1 and Auth::user()->plan_id != 2)
+                    <button wire:click='historialTrue({{ $detalleProducto->id }})'
                         class="font-semibold cursor-pointer ml-2 text-white bg-gray-800 hover:bg-black focus:ring-2 focus:ring-red-300 rounded-md px-3 py-1 text-sm">
-                    Ver historial de ventas
-                </button>
-            </div>
-            {{-- <div class="border h-[700px]">
-
-            </div> --}}
+                        Ver historial de ventas
+                    </button>
+                @endif
+            </div>          
         </div>
-        
     </div>
 </div>
-        

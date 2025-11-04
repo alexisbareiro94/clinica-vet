@@ -6,7 +6,25 @@
     <main class="ml-0 md:ml-64 md:pl-20 md:pt-2 pt-16 pl-2 pr-4">
         <p class="pl-1 py-7 text-4xl font-semibold">Reportes</p>
 
-        <div class="grid grid-cols-3 gap-4 px-12">
+        @if (Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2)
+            <div class="grid grid-cols-2 gap-4 px-12">
+        @else
+            <div class="grid grid-cols-3 gap-4 px-12">
+        @endif
+        @if (Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2)
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
+                <p class="font-medium">Funcionalidad disponible desde el plan estándar</p>
+                <p class="text-sm mt-1">
+                    Para ver los <span class="font-semibold">productos más vendidos</span> y las <span
+                        class="font-semibold">consultas más realizadas</span>, necesitas un plan de pago.
+                </p>
+
+                <a href="#"
+                    class="inline-block mt-3 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded transition">
+                    Mejorar mi plan
+                </a>
+            </div>
+        @else
             <div class="col-span-2 bg-gray-100 rounded-lg p-4 ">
                 <div class="flex justify-between">
                     <div class="flex relative">
@@ -15,7 +33,7 @@
                                 Productos mas vendidos
                             @else
                                 Consultas mas realizadas
-                            @endif                            
+                            @endif
                         </p>
                         @if ($filtroTag)
                             <p
@@ -49,22 +67,25 @@
                         <span class="font-semibold absolute right-11">Filtros: </span>
                         <button wire:click='filtroTrue'
                             class="cursor-pointer pr-2 bg-black rounded-md text-white px-2 py-1 group">
-                            <svg class=" w-6 h-6 transition duration-300 group-hover:rotate-12" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 17 17">
+                            <svg class=" w-6 h-6 transition duration-300 group-hover:rotate-12"
+                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-funnel-fill" viewBox="0 0 17 17">
                                 <path
                                     d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z" />
                             </svg>
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="mt-2 rounded-lg overflow-hidden shadow-md ">
                     <table class="min-w-full bg-white rounded-lg hidden md:table">
                         <thead class="bg-gray-200 text-gray-800 border-t border-gray-300">
                             <tr>
                                 <th class="py-1 px-4 text-left text-semibold sr-only">foto</th>
-                                <th class="py-1 px-4 text-left text-semibold">{{ $filtroPor == 1 ? 'Producto' : 'Consulta' }}</th>
-                                <th class="py-1 px-4 text-left text-semibold">{{ $filtroPor == 1 ? 'Ventas' : 'Veces realizadas' }}</th>
+                                <th class="py-1 px-4 text-left text-semibold">
+                                    {{ $filtroPor == 1 ? 'Producto' : 'Consulta' }}</th>
+                                <th class="py-1 px-4 text-left text-semibold">
+                                    {{ $filtroPor == 1 ? 'Ventas' : 'Veces realizadas' }}</th>
                             </tr>
                         </thead>
 
@@ -72,47 +93,51 @@
                             @foreach ($ventas as $venta)
                                 <tr wire:key='{{ $venta->id }}'
                                     class="border-t border-gray-200 hover:bg-gray-100 transition duration-300">
-                                    <td class="px-4 {{$filtroPor == 2 ? 'py-2' : '' }}">
+                                    <td class="px-4 {{ $filtroPor == 2 ? 'py-2' : '' }}">
                                         @if ($venta->foto == null)
-                                            <img class="w-3 h-3" src="{{ asset('images/tabicon.png') }}" alt="Foto del producto">                                            
+                                            <img class="w-3 h-3" src="{{ asset('images/tabicon.png') }}"
+                                                alt="Foto del producto">
                                         @else
-                                            <img class="w-12 h-12" src="{{ asset('uploads/productos/' . $venta->foto) }}" alt="Foto del producto">
-                                        @endif                                        
+                                            <img class="w-12 h-12"
+                                                src="{{ asset('uploads/productos/' . $venta->foto) }}"
+                                                alt="Foto del producto">
+                                        @endif
                                     </td>
-                                    <td class=" px-4 {{$filtroPor == 2 ? 'py-2' : '' }}">
+                                    <td class=" px-4 {{ $filtroPor == 2 ? 'py-2' : '' }}">
                                         {{ $venta->nombre }}
                                     </td>
-                                    <td class=" px-4 {{$filtroPor == 2 ? 'py-2' : '' }}">
+                                    <td class=" px-4 {{ $filtroPor == 2 ? 'py-2' : '' }}">
                                         @if ($filtroPor == 1)
                                             {{ $venta->ventas }}
                                         @else
-                                            {{ $venta->veces_realizadas }}                                            
+                                            {{ $venta->veces_realizadas }}
                                         @endif
-                                        
+
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-            </div>            
-            <div class="bg-gray-100 h-48 rounded-lg p-4 bg-cover bg-center">
-                @include('includes.reportes.razas')
             </div>
-            
-
-            <div class="col-span-3 bg-gray-100 rounded-lg p-4 ">
-                @livewire('entradas-table')
-            </div>
-                        
+        @endif
+        <div class="bg-gray-100 h-48 rounded-lg p-4 bg-cover bg-center">
+            @include('includes.reportes.razas')
         </div>
-    </main>
 
-    @if ($fechas)
-        @include('includes.reportes.ventas')
-    @endif
 
-    @if ($filtro)
-        @include('includes.reportes.filtros')
-    @endif
+        <div class="col-span-3 bg-gray-100 rounded-lg p-4 ">
+            @livewire('entradas-table')
+        </div>
+
+</div>
+</main>
+
+@if ($fechas)
+    @include('includes.reportes.ventas')
+@endif
+
+@if ($filtro)
+    @include('includes.reportes.filtros')
+@endif
 </div>

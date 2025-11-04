@@ -176,6 +176,10 @@ class FormAddMascota extends Component
     
 
     public function enviarRecordatorio(int $vacunacionId) :void{
+        if(Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2 || Auth::user()->plan_id == 3){
+            return;
+        }
+
         $vacunacion = Vacunacion::where('id', $vacunacionId)
                                 ->where('owner_id', $this->ownerId())
                                 ->first();
@@ -198,6 +202,32 @@ class FormAddMascota extends Component
      * 
      */
     public function crearConsulta(int $productoId, int $vacunacionId){
+        $r = '';
+        if(Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2){
+            $r = Consulta::where('owner_id', $this->ownerId())->get();
+            if($r->count() >= 50){
+                return redirect()->route('consultas')->with('error', 'No puedes crear más de 50 consultas en el plan gratuito/Básico');
+            }            
+        }
+
+        if(Auth::user()->plan_id == 3){
+            if($r->count() >= 100){
+                return redirect()->route('consultas')->with('error', 'No puedes crear más de 100 consultas en el plan Estándar');
+            }
+        }
+
+        if(Auth::user()->plan_id == 4){
+            if($r->count() >= 200){
+                return redirect()->route('consultas')->with('error', 'No puedes crear más de 200 consultas en el plan Profesional');
+            }
+        }
+
+        if(Auth::user()->plan_id == 5){
+            if($r->count() >= 350){
+                return redirect()->route('consultas')->with('error', 'No puedes crear más de 350 consultas en el plan Avanzado');
+
+            }
+        }
         $consultas = Consulta::where('owner_id', $this->ownerId())
                                 ->where('mascota_id', $this->mascotaT->id)
                                 ->where('owner_id', $this->ownerId())

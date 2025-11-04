@@ -1,5 +1,5 @@
 <div id="gestion-pacientes"
-    class="min-h-[300px] w-[450px] bg-cover bg-center rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 relative"
+    class=" bg-cover bg-center rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 relative"
     style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{{ asset('images/tests/gestion-pacientes.webp') }}');">
 
     <!-- Overlay con efecto de degradado -->

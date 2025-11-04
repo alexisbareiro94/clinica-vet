@@ -7,9 +7,14 @@ use App\Models\MovimientoProduct;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ReportsController extends Controller {
-    public function exportarPdf(Request $request) {            
+    public function exportarPdf(Request $request) { 
+        if(Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2){
+            return back()->with('error', 'No tienes permisos para generar reportes');
+
+        }           
         if($request->filtroPor == 1){        
             $desde = $request->desde . ' 00:00:00' ?? now()->startOfDay();
             $hasta = $request->hasta . ' 23:59:59' ?? now()->endOfDay();
@@ -41,7 +46,10 @@ class ReportsController extends Controller {
     }
 
 
-    public function reporteEntradas(Request $request) {        
+    public function reporteEntradas(Request $request) {     
+        if(Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2){
+            return back()->with('error', 'No tienes permisos para generar reportes');
+        }   
         $desde = $request->desde != null ? $request->desde . ' 00:00:00' : now()->startOfDay();
         $hasta = $request->desde != null ? $request->hasta . ' 23:59:59' : now()->endOfDay();
         

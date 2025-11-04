@@ -14,6 +14,7 @@
             @endif            
         </div>
         <!-- boton de pdf -->
+        @if (Auth::user()->plan_id != 1 and Auth::user()->plan_id != 2)
         <div>
             <button wire:click="pdfTrue" class="bg-red-600 text-white px-2 py-1 rounded-lg cursor-pointer group">
                 <svg class="w-6 h-6 text-gray-800 dark:text-white transition duration-300 group-hover:rotate-12"
@@ -27,6 +28,7 @@
 
             </button>
         </div>
+        @endif
         <!-- boton de filtro -->
         <div class="relative">
             <span class="font-semibold absolute right-11">Filtros: </span>

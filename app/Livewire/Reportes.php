@@ -36,7 +36,10 @@ class Reportes extends Component {
         } 
         return $admin_id;
     }
-    public function setFiltroPor($filtroPor) : void {        
+    public function setFiltroPor($filtroPor) : void {  
+        if (Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2){
+            return;
+        }      
         if($filtroPor == 1){
             $this->filtroPor = 1;
             $this->ventas = Producto::where('ventas', '!=', 0)
@@ -57,7 +60,10 @@ class Reportes extends Component {
     /**
      * 
      */
-    public function filtroTrue(){        
+    public function filtroTrue(){    
+        if (Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2){
+            return;
+        }              
         $this->filtro = true;
         
     }
@@ -83,13 +89,22 @@ class Reportes extends Component {
                                 ->get();                                                                                                           
     }
 
-    public function fechasTrue() : void {                   
+    public function fechasTrue() : void { 
+        if (Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2){
+            return;
+        }                  
         $this->fechas = true;                     
     }
     public function fechasFalse() : void {
+        if (Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2){
+            return;
+        }          
         $this->fechas = false;        
     }    
-    public function filtrar(){                        
+    public function filtrar(){   
+        if (Auth::user()->plan_id == 1 || Auth::user()->plan_id == 2){
+            return;
+        }                     
         if($this->search == ''){      
             $this->desde = empty($this->desde) ? now()->startOfDay()->format('Y-m-d H:s:i') : Carbon::parse($this->desde)->format('Y-m-d H:s:i'); 
             $this->hasta = empty($this->hasta) ? now()->endOfDay()->format('Y-m-d H:s:i') :  Carbon::parse($this->hasta)->format('Y-m-d H:s:i');
